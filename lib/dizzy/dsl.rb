@@ -22,7 +22,7 @@ module Dizzy::DSL
   end
 
 
-  def di(name, clazz = nil, &block)
+  def di(name, clazz = nil, *args, &block)
     ___method_name   = name.to_sym
     ___variable_name = "@#{name}".to_sym
 
@@ -30,7 +30,7 @@ module Dizzy::DSL
     rule = Dizzy::Rule.new
 
     if clazz
-      rule.init_proc = lambda{ clazz.new }
+      rule.init_proc = lambda{ clazz.new(*args) }
       rule.wire_proc = block || lambda{|x| }
     else
       rc   = ::Dizzy::DSL::RuleContext.new(rule)
