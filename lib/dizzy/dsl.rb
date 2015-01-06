@@ -18,12 +18,15 @@ module Dizzy::DSL
 
 
 
-  def di_define_method(__di__options = {})
-    __di__method_name   = __di__options.fetch(:name).to_sym
-    __di__variable_name = "@#{__di__method_name}".to_sym
+  def di_define_method(__di__method_name, __di__init_proc, __di__wire_proc)
+    unless __di__init_proc
+      raise ArgumentError.new("No init proc was specified for: #{__di__method_name}")
+    end
 
-    __di__init_proc     = __di__options.fetch(:init_proc)
-    __di__wire_proc     = __di__options.fetch(:wire_proc)
+    # If wire_proc wasn't specified, then just no-op
+    __di__wire_proc ||= lambda{|x| }    
+
+    __di__variable_name = "@#{__di__method_name}".to_sym
 
     define_method __di__method_name do
       unless instance_variable_defined? __di__variable_name
@@ -43,21 +46,13 @@ module Dizzy::DSL
     rc   = ::Dizzy::DSL::RuleContext.new
     rc.instance_exec(&block)
 
-    di_define_method(
-      name: name,
-      init_proc: rc.init_proc,
-      wire_proc: rc.wire_proc
-    )
+    di_define_method(name, rc.init_proc, rc.wire_proc)
   end
 
 
   # Use this when you only need to init an object
   def di_init(name, &block)
-    di_define_method(
-      name:      name,
-      init_proc: block,
-      wire_proc: lambda{|x| }
-    )
+    di_define_method(name, block, nil)
   end
 
 
@@ -65,11 +60,8 @@ module Dizzy::DSL
   # For example: you're just creating an instance
   # of a class w/ a hard-coded set of arguments.
   def di_wire(name, clazz, *args, &block)
-    di_define_method(
-      name:      name,
-      init_proc: lambda{ clazz.new(*args) },
-      wire_proc: block
-    )
+    init_proc = lambda{ clazz.new(*args) }
+    di_define_method(name, init_proc, block)
   end
 
 
