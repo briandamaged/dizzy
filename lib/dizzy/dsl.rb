@@ -8,7 +8,7 @@ module Dizzy::DSL
 
     attr_reader :rule
 
-    def initialize(rule = ::Dizzy::Rule.new)
+    def initialize(rule)
       @rule = rule
     end
 
@@ -22,13 +22,21 @@ module Dizzy::DSL
   end
 
 
-  def di(name, &block)
+  def di(name, clazz = nil, &block)
     ___method_name   = name.to_sym
     ___variable_name = "@#{name}".to_sym
 
-    rc   = ::Dizzy::DSL::RuleContext.new
-    rc.instance_exec(&block)
-    rule = rc.rule
+
+    rule = Dizzy::Rule.new
+
+    if clazz
+      rule.init_proc = lambda{ clazz.new }
+      rule.wire_proc = block || lambda{|x| }
+    else
+      rc   = ::Dizzy::DSL::RuleContext.new(rule)
+      rc.instance_exec(&block)
+    end
+
 
     define_method ___method_name do
       unless instance_variable_defined? ___variable_name
