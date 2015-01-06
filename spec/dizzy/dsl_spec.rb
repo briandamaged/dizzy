@@ -39,13 +39,8 @@ describe Dizzy::DSL do
         end
       end
 
-      di :bar do 
-        init do
-          Bar.new("bar")
-        end
-        wire do |bar|
-          bar.foo = foo
-        end
+      di_wire :bar, Bar, "bar" do 
+        bar.foo = foo
       end
     end
 

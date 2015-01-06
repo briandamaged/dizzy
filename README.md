@@ -40,7 +40,7 @@ Here's a really terrible example to get you started:
         end
       end
 
-      di :bar, Bar, "bar name" do |bar_instance|
+      di_wire :bar, Bar, "bar name" do |bar_instance|
         bar_instance.foo = foo
       end
     end
