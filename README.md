@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/dizzy.svg)](http://badge.fury.io/rb/dizzy)
+
 # dizzy #
 
 Dependency Injection that won't make your head spin!
@@ -12,7 +14,7 @@ Dependency Injection that won't make your head spin!
 
 ## 5-minute Tour ##
 
-Typically, you would use ```dizzy``` when you have several objects that need to be assembled in a specific way.  But, for the sake of example, let's just assemble 2 objects.  First, let's define a ```Person``` class:
+Typically, you would use ```dizzy``` when you have dozens or hundreds of objects that need to be assembled.  But, for the sake of example, let's just assemble 2 objects.  First, let's define a ```Person``` class:
 
 ```ruby
 class Person
